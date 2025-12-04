@@ -1,30 +1,27 @@
-import { useState, useContext } from "react";
-import API from "@/services/api";
-import { AuthContext } from "@/context/AuthContext";
-import { useRouter } from "next/router";
+"use client";
 
-export default function Login() {
-  const { login } = useContext(AuthContext)!;
-  const router = useRouter();
+import { useState } from "react";
+import axios from "axios";
 
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = async (e: any) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await API.post("/auth/login", { email, password });
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password,
+      });
 
-      login(response.data.token, response.data.user);
-
-      // redirect by role
-      if (response.data.user.role === "patient") router.push("/dashboard/patient");
-      else if (response.data.user.role === "doctor") router.push("/dashboard/doctor");
-      else router.push("/dashboard/admin");
-
+      localStorage.setItem("token", res.data.token);
+      alert("Login successful!");
+      window.location.href = "/dashboard";
     } catch (err: any) {
-      alert(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message ?? "Login failed");
     }
   };
 
@@ -35,20 +32,24 @@ export default function Login() {
       <form onSubmit={handleLogin}>
         <input
           type="email"
+          className="border p-2"
           placeholder="Email"
-          value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
           type="password"
+          className="border p-2"
           placeholder="Password"
-          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button type="submit">Login</button>
+        <button type="submit" className="bg-blue-600 text-white p-2">
+          Login
+        </button>
       </form>
+
+      {error && <p className="text-red-500">{error}</p>}
     </div>
   );
 }
