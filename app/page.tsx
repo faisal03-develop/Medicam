@@ -1,4 +1,11 @@
+// git remote add origin https://github.com/faisal03-develop/Medicam.git
+
+
+
+
 import Image from "next/image";
+
+
 
 export default function Home() {
   return (
