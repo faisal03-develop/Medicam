@@ -1,6 +1,8 @@
+"use client";
+
 import { useState } from "react";
 import API from "@/services/api";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function Register() {
   const router = useRouter();
